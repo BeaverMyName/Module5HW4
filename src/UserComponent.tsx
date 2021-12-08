@@ -5,19 +5,19 @@ import IResponse from './DTO/Response';
 const url = "https://reqres.in/api/users";
 
 interface IEmployee {
-    id: number,
-    name: string,
-    job: string,
-    createdAt: number
-    updatedAt: number
+    id: number | undefined,
+    name: string | undefined,
+    job: string | undefined,
+    createdAt: number | undefined,
+    updatedAt: number | undefined
 }
 
 interface IUser {
-    id: number,
-    email: string,
-    first_name: string,
-    last_name: string,
-    avatar: string
+    id: number | undefined,
+    email: string | undefined,
+    first_name: string | undefined,
+    last_name: string | undefined,
+    avatar: string | undefined
 }
 
 const getUserList = async (page: number) : Promise<IResponse<IUser[]>> => {
@@ -70,6 +70,24 @@ const modifyUser = async (id: number, name: string, job: string) : Promise<IEmpl
 //     return await response.json();
 // }
 
+const UserCardComponent = (props: IUser) => {
+    return  <Card as="li" key={props?.id}>
+                <Card.Body>
+                    <Card.Title>{props?.email}</Card.Title>
+                    <Card.Text>{props?.first_name} {props?.last_name}</Card.Text>
+                </Card.Body>
+            </Card>
+}
+
+const EmployeeCardComponent = (props: IEmployee) => {
+    return  <Card as="li" key={props?.id}>
+                <Card.Body>
+                    <Card.Title>{props?.name}</Card.Title>
+                    <Card.Text>{props?.job} {props?.updatedAt} {props?.createdAt}</Card.Text>
+                </Card.Body>
+            </Card>
+}
+
 const UserComponent = () => {
 
     const [userList, setUserList] = React.useState<IResponse<IUser[]> | null>(null);
@@ -100,44 +118,14 @@ const UserComponent = () => {
 
     return (<>
                 {userList?.data.map(item => (
-                    <Card as="li" key={item.id}>
-                        <Card.Body>
-                            <Card.Title>{item.email}</Card.Title>
-                            <Card.Text>{item.first_name} {item.last_name}</Card.Text>
-                        </Card.Body>
-                    </Card>
+                    <UserCardComponent id={item.id} first_name={item.first_name} last_name={item.last_name} email={item.email} avatar={item.avatar}/>
                 ))}
-                <Card as="li" key={user?.data.id}>
-                    <Card.Body>
-                        <Card.Title>{user?.data.email}</Card.Title>
-                        <Card.Text>{user?.data.first_name} {user?.data.last_name}</Card.Text>
-                     </Card.Body>
-                </Card>
-                <Card as="li" key={createdUser?.id}>
-                    <Card.Body>
-                        <Card.Title>{createdUser?.name}</Card.Title>
-                        <Card.Text>{createdUser?.job} {createdUser?.createdAt}</Card.Text>
-                    </Card.Body>
-                </Card>
-                <Card as="li" key={updatedUser?.id}>
-                    <Card.Body>
-                        <Card.Title>{updatedUser?.name}</Card.Title>
-                        <Card.Text>{updatedUser?.job} {updatedUser?.updatedAt}</Card.Text>
-                    </Card.Body>
-                </Card>
-                <Card as="li" key={modifiedUser?.id}>
-                    <Card.Body>
-                        <Card.Title>{modifiedUser?.name}</Card.Title>
-                        <Card.Text>{modifiedUser?.job} {modifiedUser?.updatedAt}</Card.Text>
-                    </Card.Body>
-                </Card>
+                <UserCardComponent id={user?.data.id} first_name={user?.data.first_name} last_name={user?.data.last_name} email={user?.data.email} avatar={user?.data.avatar}/>
+                <EmployeeCardComponent id={createdUser?.id} name={createdUser?.name} job={createdUser?.job} createdAt={createdUser?.createdAt} updatedAt={createdUser?.updatedAt}/>
+                <EmployeeCardComponent id={updatedUser?.id} name={updatedUser?.name} job={updatedUser?.job} createdAt={updatedUser?.createdAt} updatedAt={updatedUser?.updatedAt}/>
+                <EmployeeCardComponent id={modifiedUser?.id} name={modifiedUser?.name} job={modifiedUser?.job} createdAt={modifiedUser?.createdAt} updatedAt={modifiedUser?.updatedAt}/>
                 {delayedUserList?.data.map(item => (
-                    <Card as="li" key={item.id}>
-                        <Card.Body>
-                            <Card.Title>{item.email}</Card.Title>
-                            <Card.Text>{item.first_name} {item.last_name}</Card.Text>
-                        </Card.Body>
-                    </Card>
+                    <UserCardComponent id={item.id} first_name={item.first_name} last_name={item.last_name} email={item.email} avatar={item.avatar}/>
                 ))}
             </>);
 }
