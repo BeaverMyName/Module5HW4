@@ -5,12 +5,12 @@ const registerUrl = "https://reqres.in/api/register";
 const loginUrl = "https://reqres.in/api/login"
 
 interface IAuthorisationResponse {
-    id: number,
-    token: string
+    id: number | undefined,
+    token: string | undefined
 }
 
 interface IErrorText {
-    error: string
+    error: string | undefined
 }
 
 const authorise = async (email: string, password: string, url: string) : Promise<IAuthorisationResponse> => {
@@ -35,6 +35,23 @@ const unsuccessfulAuthorise = async (email: string, url: string) : Promise<IErro
     return await response.json();
 }
 
+const SuccessAuthComponent = (props: IAuthorisationResponse) => {
+    return  <Card key={props?.id}>
+                <Card.Body>
+                    <Card.Title>{props?.id}</Card.Title>
+                    <Card.Text>{props?.token}</Card.Text>
+                </Card.Body>
+            </Card>
+}
+
+const UnsuccessAuthComponent = (props: IErrorText) => {
+    return  <Card key={props?.error}>
+                <Card.Body>
+                    <Card.Text>{props?.error}</Card.Text>
+                </Card.Body>
+            </Card>
+}
+
 const AuthComponent = () => {
     const [registered, setRegistered] = React.useState<IAuthorisationResponse | null>(null);
     const [logined, setLogined] = React.useState<IAuthorisationResponse | null>(null);
@@ -54,31 +71,13 @@ const AuthComponent = () => {
         }
 
         init();
-    }, [])
+    }, []);
 
     return <>
-                <Card key={registered?.id}>
-                    <Card.Body>
-                        <Card.Title>{registered?.id}</Card.Title>
-                        <Card.Text>{registered?.token}</Card.Text>
-                    </Card.Body>
-                </Card>
-                <Card key={logined?.id}>
-                    <Card.Body>
-                        <Card.Title>{logined?.id}</Card.Title>
-                        <Card.Text>{logined?.token}</Card.Text>
-                    </Card.Body>
-                </Card>
-                <Card>
-                    <Card.Body>
-                        <Card.Text>{registerError?.error}</Card.Text>
-                    </Card.Body>
-                </Card>
-                <Card>
-                    <Card.Body>
-                        <Card.Text>{loginError?.error}</Card.Text>
-                    </Card.Body>
-                </Card>
+                <SuccessAuthComponent id={registered?.id} token={registered?.token}/>
+                <SuccessAuthComponent id={logined?.id} token={logined?.token}/>
+                <UnsuccessAuthComponent error={registerError?.error}/>
+                <UnsuccessAuthComponent error={loginError?.error}/>
            </>
 }
 
